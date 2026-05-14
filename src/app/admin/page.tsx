@@ -65,7 +65,7 @@ export default function AdminDashboard() {
           <motion.button 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-2 px-6 py-3 bg-[#2D338B] text-white rounded-xl font-bold shadow-lg shadow-[#2D338B]/20"
+            className="flex items-center gap-2 px-6 py-3 bg-[#2D338B] text-white rounded-xl font-bold border border-[#2D338B]/10"
           >
             Export Report <ChevronRight className="h-4 w-4" />
           </motion.button>
@@ -81,7 +81,7 @@ export default function AdminDashboard() {
           { title: 'Conversion Rate', value: `${stats?.kpis.conversionRate}%`, icon: TrendingUp, trend: '+1.2%', trendType: 'up', color: '#10B981' },
         ].map((kpi, i) => (
           <ScaleIn key={kpi.title} delay={i * 0.1}>
-            <Card className="border-none shadow-xl hover:shadow-2xl transition-all rounded-3xl overflow-hidden group">
+            <Card className="border border-zinc-100 transition-all rounded-3xl overflow-hidden group">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-sm font-bold text-muted-foreground uppercase tracking-wider">{kpi.title}</CardTitle>
                 <div className="p-2 rounded-xl bg-muted group-hover:bg-[#2D338B]/10 transition-colors">
@@ -103,7 +103,7 @@ export default function AdminDashboard() {
       {/* Charts */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
         <FadeIn delay={0.4} className="lg:col-span-4">
-          <Card className="border-none shadow-xl rounded-3xl overflow-hidden">
+          <Card className="border border-zinc-100 rounded-3xl overflow-hidden">
             <CardHeader>
               <CardTitle className="text-xl font-bold flex items-center gap-2">
                 <div className="w-2 h-6 bg-[#2D338B] rounded-full" />
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
         </FadeIn>
 
         <FadeIn delay={0.5} className="lg:col-span-3">
-          <Card className="border-none shadow-xl rounded-3xl overflow-hidden h-full">
+          <Card className="border border-zinc-100 rounded-3xl overflow-hidden h-full">
             <CardHeader>
               <CardTitle className="text-xl font-bold flex items-center gap-2">
                 <div className="w-2 h-6 bg-[#F7941E] rounded-full" />
@@ -176,7 +176,7 @@ export default function AdminDashboard() {
         </FadeIn>
 
         <FadeIn delay={0.6} className="lg:col-span-7">
-          <Card className="border-none shadow-xl rounded-3xl overflow-hidden">
+          <Card className="border border-zinc-100 rounded-3xl overflow-hidden">
             <CardHeader>
               <CardTitle className="text-xl font-bold flex items-center gap-2">
                 <div className="w-2 h-6 bg-green-500 rounded-full" />

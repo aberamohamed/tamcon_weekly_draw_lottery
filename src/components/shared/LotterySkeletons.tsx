@@ -1,61 +1,40 @@
 'use client';
 
-import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
-import { Ticket, Trophy } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-export const TicketSkeleton = () => (
-  <motion.div 
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    className="relative overflow-hidden bg-card rounded-xl border-2 border-dashed border-muted p-6 flex justify-between items-center"
-  >
-    <div className="space-y-2">
-      <Skeleton className="h-6 w-32" />
-      <Skeleton className="h-4 w-24" />
-    </div>
-    <div className="flex gap-2">
-      <Skeleton className="h-8 w-16 rounded-full" />
-    </div>
-    {/* Decorative punch holes */}
-    <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-background border-r-2 border-dashed border-muted" />
-    <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-background border-l-2 border-dashed border-muted" />
-  </motion.div>
-);
+interface SkeletonProps {
+  className?: string;
+  variant?: 'rect' | 'circle' | 'text';
+}
 
-export const DrawBallSkeleton = () => (
-  <div className="flex gap-4 justify-center py-8">
-    {[1, 2, 3, 4, 5, 6].map((i) => (
+export const Skeleton = ({ className, variant = 'rect' }: SkeletonProps) => {
+  return (
+    <div
+      className={cn(
+        "relative overflow-hidden bg-zinc-100",
+        variant === 'circle' ? 'rounded-full' : 'rounded-lg',
+        className
+      )}
+    >
       <motion.div
-        key={i}
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: i * 0.1, type: 'spring' }}
-      >
-        <Skeleton className="h-14 w-14 rounded-full shadow-inner" />
-      </motion.div>
-    ))}
-  </div>
-);
-
-export const StatsCardSkeleton = () => (
-  <CardSkeleton className="h-32" />
-);
-
-export const CardSkeleton = ({ className = "" }: { className?: string }) => (
-  <div className={`p-6 rounded-2xl bg-card border shadow-sm space-y-4 ${className}`}>
-    <div className="flex justify-between items-center">
-      <Skeleton className="h-4 w-24" />
-      <Skeleton className="h-8 w-8 rounded-full" />
+        animate={{
+          x: ['-100%', '100%'],
+        }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          ease: 'linear',
+        }}
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent shadow-none"
+      />
     </div>
-    <Skeleton className="h-8 w-32" />
-    <Skeleton className="h-4 w-full" />
-  </div>
-);
+  );
+};
 
 export const FadeIn = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
   <motion.div
-    initial={{ opacity: 0, y: 20 }}
+    initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, delay }}
   >
@@ -65,10 +44,93 @@ export const FadeIn = ({ children, delay = 0 }: { children: React.ReactNode, del
 
 export const ScaleIn = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => (
   <motion.div
-    initial={{ scale: 0.9, opacity: 0 }}
-    animate={{ scale: 1, opacity: 1 }}
+    initial={{ opacity: 0, scale: 0.98 }}
+    animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.4, delay }}
   >
     {children}
   </motion.div>
 );
+
+export const StatsCardSkeleton = () => (
+  <div className="space-y-2">
+    <Skeleton className="h-8 w-24" />
+    <Skeleton className="h-3 w-32" />
+  </div>
+);
+
+export const DrawBallSkeleton = () => (
+  <div className="flex gap-2">
+    {[1, 2, 3, 4, 5, 6].map((i) => (
+      <Skeleton key={i} className="h-10 w-10 rounded-full" />
+    ))}
+  </div>
+);
+
+export const TicketSkeleton = () => (
+  <div className="flex items-center justify-between py-3 border-b border-zinc-50 last:border-0">
+    <div className="space-y-1">
+      <Skeleton className="h-4 w-24" />
+      <Skeleton className="h-3 w-16" />
+    </div>
+    <Skeleton className="h-5 w-16 rounded-full" />
+  </div>
+);
+
+export const DashboardSkeleton = () => {
+  return (
+    <div className="space-y-8 max-w-7xl mx-auto w-full p-4 md:p-0">
+      <div className="space-y-2">
+        <Skeleton className="h-10 w-48 md:w-64" />
+        <Skeleton className="h-4 w-64 md:w-96" />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="p-6 bg-white border border-zinc-100 rounded-xl space-y-4">
+            <div className="flex justify-between items-center">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-5 w-5 rounded-full" />
+            </div>
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-full rounded-lg" />
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="p-6 bg-white border border-zinc-100 rounded-xl space-y-6">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-5 w-5 rounded-full" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+          <div className="space-y-4">
+            <Skeleton className="h-24 w-full rounded-lg" />
+            <Skeleton className="h-12 w-full rounded-lg" />
+          </div>
+        </div>
+
+        <div className="p-6 bg-white border border-zinc-100 rounded-xl space-y-6">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-5 w-5 rounded-full" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+          <div className="space-y-4">
+            {[1, 2, 3].map((j) => (
+              <div key={j} className="flex items-center justify-between py-2 border-b border-zinc-50 last:border-0">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-10 w-10 rounded-lg" />
+                  <div className="space-y-1">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-3 w-16" />
+                  </div>
+                </div>
+                <Skeleton className="h-4 w-12" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -4,29 +4,33 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { 
-  ShieldCheck, 
+  Trophy, 
   Users, 
-  BarChart3, 
-  Settings, 
+  LayoutDashboard, 
+  Calendar, 
+  CreditCard, 
   LogOut, 
-  Zap, 
   Menu, 
   X,
-  CreditCard,
-  UserCircle,
-  Receipt
+  Settings,
+  Shield,
+  ChevronRight,
+  Search,
+  UserCheck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
 
-const adminItems = [
-  { name: 'KPI Dashboard', href: '/admin', icon: BarChart3 },
+const navItems = [
+  { name: 'Admin Home', href: '/admin', icon: LayoutDashboard },
+  { name: 'Manage Draws', href: '/admin/draws', icon: Calendar },
   { name: 'User Management', href: '/admin/users', icon: Users },
-  { name: 'Transactions', href: '/admin/transactions', icon: Receipt },
-  { name: 'Draw Management', href: '/admin/draws', icon: Zap },
+  { name: 'Financials', href: '/admin/transactions', icon: CreditCard },
+  { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
 export function AdminNav() {
@@ -35,63 +39,76 @@ export function AdminNav() {
   const [isOpen, setIsOpen] = useState(false);
 
   const NavContent = () => (
-    <div className="flex flex-col h-full py-6">
-      <div className="px-6 mb-8 flex items-center gap-2">
-        <div className="p-1.5 rounded-md bg-[#2D338B]">
-          <ShieldCheck className="h-5 w-5 text-white" />
+    <div className="flex flex-col h-full bg-white">
+      {/* Search Bar */}
+      <div className="px-4 pt-6 pb-4 border-b border-zinc-50">
+        <div className="relative group">
+          <Input 
+            placeholder="Search resources..." 
+            className="h-10 pl-4 pr-10 bg-zinc-50 border-zinc-100 rounded-lg focus:ring-1 focus:ring-[#2D338B] transition-all"
+          />
+          <div className="absolute right-1 top-1 bottom-1 w-8 bg-[#2D338B] rounded-md flex items-center justify-center text-white cursor-pointer hover:bg-[#2D338B]/90 transition-colors">
+            <Search className="h-4 w-4" />
+          </div>
         </div>
-        <span className="font-bold text-xl">
-          <span className="text-[#2D338B]">TAM</span>
-          <span className="text-[#F7941E]">CON.</span>
-        </span>
       </div>
       
-      <nav className="flex-1 px-4 space-y-2">
-        {adminItems.map((item) => {
+      {/* Navigation Items */}
+      <nav className="flex-1 px-3 py-4 space-y-0.5">
+        {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setIsOpen(false)}
-              className={`relative flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all group ${
+              className={cn(
+                "relative flex items-center justify-between p-2 rounded-xl transition-all group overflow-hidden",
                 isActive 
-                  ? 'text-white' 
-                  : 'text-muted-foreground hover:text-[#2D338B] hover:bg-[#2D338B]/5'
-              }`}
-            >
-              {isActive && (
-                <motion.div
-                  layoutId="activeAdminNav"
-                  className="absolute inset-0 bg-[#2D338B] rounded-xl -z-10 shadow-lg shadow-[#2D338B]/20"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                />
+                  ? "bg-[#2D338B] text-white" 
+                  : "text-zinc-500 hover:text-[#2D338B] hover:bg-zinc-100"
               )}
-              <item.icon className={`h-5 w-5 ${isActive ? 'text-white' : 'group-hover:scale-110 transition-transform'}`} />
-              {item.name}
+            >
+              <div className="flex items-center gap-4">
+                <div className={cn(
+                  "w-10 h-10 rounded-xl flex items-center justify-center transition-all border",
+                  isActive 
+                    ? "bg-white/10 border-white/20" 
+                    : "bg-zinc-100 border-transparent group-hover:bg-white group-hover:border-zinc-200"
+                )}>
+                  <item.icon className={cn(
+                    "h-5 w-5 transition-colors",
+                    isActive ? "text-white" : "text-zinc-400 group-hover:text-[#2D338B]"
+                  )} />
+                </div>
+                <span className={cn(
+                  "text-sm font-bold transition-colors",
+                  isActive ? "text-white" : "text-zinc-500 group-hover:text-[#2D338B]"
+                )}>
+                  {item.name}
+                </span>
+              </div>
+              
+              <ChevronRight className={cn(
+                "h-4 w-4 transition-all",
+                isActive ? "text-white/70" : "text-zinc-300 opacity-0 group-hover:opacity-100 group-hover:translate-x-1"
+              )} />
             </Link>
           );
         })}
       </nav>
 
-      <div className="px-4 mt-auto space-y-2">
-        <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-100 mb-4">
-          <div className="flex items-center gap-3 mb-1">
-            <div className="p-2 rounded-lg bg-[#2D338B]/10">
-              <UserCircle className="h-4 w-4 text-[#2D338B]" />
-            </div>
-            <div className="overflow-hidden">
-              <p className="text-sm font-bold truncate text-[#2D338B]">{user?.fullName || 'Admin'}</p>
-              <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">System Administrator</p>
-            </div>
-          </div>
-        </div>
-        <button
+      {/* Admin Quick Actions Footer */}
+      <div className="p-4 border-t border-zinc-50 bg-zinc-50/30">
+        <button 
           onClick={logout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-colors group"
+          className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-red-50 text-zinc-500 hover:text-red-500 transition-colors font-bold text-xs uppercase"
         >
-          <LogOut className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          Logout
+          <div className="flex items-center gap-3">
+            <LogOut className="h-4 w-4" />
+            <span>Terminate Session</span>
+          </div>
+          <ChevronRight className="h-4 w-4 opacity-30" />
         </button>
       </div>
     </div>
@@ -99,27 +116,12 @@ export function AdminNav() {
 
   return (
     <>
-      <aside className="hidden lg:flex w-64 border-r bg-card flex-col fixed inset-y-0 left-0">
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex w-64 border-r bg-white flex-col fixed inset-y-0 left-0 top-16 z-50">
         <NavContent />
       </aside>
 
-      <header className="lg:hidden h-16 border-b bg-card flex items-center justify-between px-4 sticky top-0 z-40">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="h-6 w-6 text-[#2D338B]" />
-          <span className="font-bold">
-            <span className="text-[#2D338B]">TAM</span>
-            <span className="text-[#F7941E]">CON.</span>
-          </span>
-        </div>
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger render={<Button variant="ghost" size="icon" />}>
-            <Menu className="h-6 w-6" />
-          </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-64">
-            <NavContent />
-          </SheetContent>
-        </Sheet>
-      </header>
+      {/* Mobile handling moved to layout */}
     </>
   );
 }
