@@ -15,9 +15,7 @@ export default function DashboardLayout({
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push('/login');
-    }
+    // Redirect only if authenticated and NOT a customer (to admin)
     if (!isLoading && isAuthenticated && user?.role !== 'customer') {
       router.push('/admin');
     }
@@ -45,7 +43,9 @@ export default function DashboardLayout({
     );
   }
 
-  if (!isAuthenticated || user?.role !== 'customer') return null;
+  // No longer blocking the entire layout if not authenticated
+  // but still enforcing admin/customer separation if user exists
+  if (!isLoading && user && user.role !== 'customer') return null;
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">

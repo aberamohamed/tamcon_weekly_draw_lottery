@@ -7,21 +7,22 @@ import { drawApi } from '@/services/api/draw.api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Wallet, 
-  Ticket as TicketIcon, 
-  Trophy, 
-  ArrowUpRight, 
-  Clock, 
-  History 
+import {
+  Wallet,
+  Ticket as TicketIcon,
+  Trophy,
+  ArrowUpRight,
+  Clock,
+  History,
+  Sparkles
 } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { 
-  TicketSkeleton, 
-  DrawBallSkeleton, 
+import {
+  TicketSkeleton,
+  DrawBallSkeleton,
   StatsCardSkeleton,
-  FadeIn 
+  FadeIn
 } from '@/components/shared/LotterySkeletons';
 import { motion } from 'framer-motion';
 
@@ -66,7 +67,7 @@ export default function DashboardPage() {
             {balanceLoading ? (
               <StatsCardSkeleton />
             ) : (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-3xl font-bold"
@@ -93,7 +94,7 @@ export default function DashboardPage() {
             {ticketsLoading ? (
               <StatsCardSkeleton />
             ) : (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-3xl font-bold"
@@ -129,11 +130,10 @@ export default function DashboardPage() {
                       initial={{ scale: 0, rotate: -180 }}
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ delay: i * 0.1, type: 'spring' }}
-                      className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl shadow-lg border-2 border-white transition-all ${
-                        isWinner 
-                          ? 'bg-gradient-to-br from-green-500 to-green-700 text-white scale-110 ring-4 ring-green-500/20' 
+                      className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg border-2 border-white transition-all leading-none ${isWinner
+                          ? 'bg-gradient-to-br from-green-500 to-green-700 text-white scale-110 ring-4 ring-green-500/20'
                           : 'bg-gradient-to-br from-[#F7941E] to-[#F7941E]/70 text-white'
-                      }`}
+                        }`}
                     >
                       {num}
                       {isWinner && <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-yellow-400 fill-current" />}

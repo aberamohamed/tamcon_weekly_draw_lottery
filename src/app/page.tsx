@@ -49,7 +49,7 @@ export default function Home() {
             Login
           </Link>
           <Button asChild size="sm" className="bg-[#2D338B] hover:bg-[#2D338B]/90 shadow-lg shadow-[#2D338B]/20">
-            <Link href="/login">Join Now</Link>
+            <Link href="/register">Join Now</Link>
           </Button>
         </nav>
       </header>
@@ -84,7 +84,7 @@ export default function Home() {
               <FadeIn delay={0.6}>
                 <div className="flex flex-col sm:flex-row gap-4 mt-8">
                   <Button size="lg" className="px-10 h-14 text-lg bg-[#2D338B] hover:bg-[#2D338B]/90 shadow-2xl shadow-[#2D338B]/30" asChild>
-                    <Link href="/login">
+                    <Link href="/register">
                       Buy Tickets <ArrowRight className="ml-2 h-5 w-5" />
                     </Link>
                   </Button>
@@ -148,7 +148,7 @@ export default function Home() {
             className="absolute top-[60%] right-[10%] hidden lg:block"
           >
             <div className="flex flex-col items-center">
-              <div className="w-28 h-28 rounded-full bg-gradient-to-br from-green-500 to-green-700 shadow-2xl flex items-center justify-center text-white font-black text-2xl border-4 border-white relative">
+              <div className="w-28 h-28 rounded-full bg-gradient-to-br from-green-500 to-green-700 shadow-2xl flex items-center justify-center text-white font-black text-xl border-4 border-white relative leading-none text-center">
                 <Sparkles className="absolute -top-2 -right-2 h-8 w-8 text-yellow-400 fill-current" />
                 Winner
               </div>

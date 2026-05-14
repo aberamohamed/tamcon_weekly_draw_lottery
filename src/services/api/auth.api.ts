@@ -12,11 +12,15 @@ export interface LoginResponse {
 
 export const authApi = {
   requestOtp: async (email: string) => {
-    const { data } = await api.post('/auth/request-otp', { email });
+    const { data } = await api.post('/auth/otp/request', { email });
     return data;
   },
   verifyOtp: async (email: string, otp: string): Promise<LoginResponse> => {
-    const { data } = await api.post('/auth/verify-otp', { email, otp });
+    const { data } = await api.post('/auth/otp/verify', { 
+      email, 
+      otp,
+      useHttpOnlyCookies: false 
+    });
     return data;
   },
   logout: async () => {
@@ -25,6 +29,18 @@ export const authApi = {
   },
   getCurrentUser: async () => {
     const { data } = await api.get('/auth/me');
+    return data;
+  },
+  register: async (userData: { 
+    fullName: string, 
+    email: string, 
+    phoneNumber: string,
+    gender: string,
+    motherName: string,
+    idType: string,
+    idNumber: string
+  }) => {
+    const { data } = await api.post('/auth/register', userData);
     return data;
   },
 };
