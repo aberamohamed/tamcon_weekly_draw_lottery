@@ -49,7 +49,7 @@ export default function DashboardPage() {
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground">Welcome back! Here's what's happening with your tickets.</p>
         </div>
-        <Button asChild className="shadow-lg shadow-primary/20">
+        <Button asChild className="border-zinc-200/50">
           <Link href="/dashboard/tickets">
             <TicketIcon className="mr-2 h-4 w-4" />
             Buy New Tickets
@@ -58,7 +58,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="border-none shadow-md bg-gradient-to-br from-primary to-primary/80 text-primary-foreground">
+        <Card className="border-none bg-gradient-to-br from-primary to-primary/80 text-primary-foreground">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Wallet Balance</CardTitle>
             <Wallet className="h-4 w-4 text-primary-foreground/70" />
@@ -85,7 +85,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-none shadow-md">
+        <Card className="border border-zinc-100">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Active Tickets</CardTitle>
             <TicketIcon className="h-4 w-4 text-muted-foreground" />
@@ -112,7 +112,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-none shadow-md">
+        <Card className="border border-zinc-100">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Latest Draw Result</CardTitle>
             <Trophy className="h-4 w-4 text-muted-foreground" />
@@ -130,7 +130,7 @@ export default function DashboardPage() {
                       initial={{ scale: 0, rotate: -180 }}
                       animate={{ scale: 1, rotate: 0 }}
                       transition={{ delay: i * 0.1, type: 'spring' }}
-                      className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg border-2 border-white transition-all leading-none ${isWinner
+                      className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg border-2 border-white transition-all leading-none ${isWinner
                           ? 'bg-gradient-to-br from-green-500 to-green-700 text-white scale-110 ring-4 ring-green-500/20'
                           : 'bg-gradient-to-br from-[#F7941E] to-[#F7941E]/70 text-white'
                         }`}
@@ -154,7 +154,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="border-none shadow-md">
+        <Card className="border border-zinc-100">
           <CardHeader>
             <CardTitle className="flex items-center">
               <Clock className="mr-2 h-5 w-5 text-primary" />
@@ -174,7 +174,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-none shadow-md">
+        <Card className="border border-zinc-100">
           <CardHeader>
             <CardTitle className="flex items-center">
               <History className="mr-2 h-5 w-5 text-primary" />

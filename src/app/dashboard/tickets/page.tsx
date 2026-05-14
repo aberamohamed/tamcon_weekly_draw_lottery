@@ -85,7 +85,7 @@ export default function TicketsPage() {
 
         <TabsContent value="buy">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="lg:col-span-2 border-none shadow-md overflow-hidden">
+            <Card className="lg:col-span-2 border border-zinc-100 overflow-hidden">
               <div className="bg-primary/5 p-6 border-b">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-full bg-primary/10">
@@ -139,7 +139,7 @@ export default function TicketsPage() {
                       </span>
                     </div>
                     <Button 
-                      className="w-full h-12 text-lg shadow-lg shadow-primary/20" 
+                      className="w-full h-12 text-lg border border-primary/10" 
                       disabled={!canAfford || buyMutation.isPending}
                       onClick={() => buyMutation.mutate(ticketCount)}
                     >
@@ -155,7 +155,7 @@ export default function TicketsPage() {
               </CardContent>
             </Card>
 
-            <Card className="border-none shadow-md bg-zinc-900 text-white">
+            <Card className="border-none bg-zinc-900 text-white">
               <CardHeader>
                 <CardTitle className="text-lg">Tips & Info</CardTitle>
               </CardHeader>
@@ -176,7 +176,7 @@ export default function TicketsPage() {
         </TabsContent>
 
         <TabsContent value="history">
-          <Card className="border-none shadow-md">
+          <Card className="border border-zinc-100">
             <CardHeader>
               <CardTitle>Ticket History</CardTitle>
               <CardDescription>A complete log of all your ticket purchases and their status.</CardDescription>

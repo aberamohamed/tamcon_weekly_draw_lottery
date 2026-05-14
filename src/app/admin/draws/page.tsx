@@ -59,7 +59,7 @@ export default function AdminDrawsPage() {
         
         <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
           <DialogTrigger render={
-            <Button size="lg" className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20" />
+            <Button size="lg" className="bg-primary hover:bg-primary/90 border border-primary/10" />
           }>
             <Zap className="mr-2 h-5 w-5 fill-current" />
             Trigger Weekly Draw
@@ -99,7 +99,7 @@ export default function AdminDrawsPage() {
         </Dialog>
       </div>
 
-      <Card className="border-none shadow-md">
+      <Card className="border border-zinc-100">
         <CardHeader>
           <CardTitle>Draw History</CardTitle>
           <CardDescription>A complete log of all executed draws.</CardDescription>
