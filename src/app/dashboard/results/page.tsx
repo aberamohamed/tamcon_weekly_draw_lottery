@@ -13,7 +13,7 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import { Trophy, Calendar, Users, DollarSign } from 'lucide-react';
+import { Trophy, Calendar, Users, Coins } from 'lucide-react';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -83,7 +83,7 @@ export default function ResultsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white/5 p-4 rounded-xl border border-white/10">
                   <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
-                    <DollarSign className="h-3 w-3" /> Total Pool
+                    <Coins className="h-3 w-3" /> Total Pool
                   </div>
                   <p className="text-lg font-bold">{latestDraw.totalPool != null ? Number(latestDraw.totalPool).toLocaleString() : '—'} ETB</p>
                 </div>

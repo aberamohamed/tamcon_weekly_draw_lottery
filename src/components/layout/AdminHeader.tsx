@@ -11,7 +11,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
 import Link from 'next/link';
 import {
   DropdownMenu,
@@ -33,8 +33,15 @@ export function AdminHeader() {
   const { user, logout } = useAuth();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
-  const displayName = user?.fullName || 'Abera M.';
-  const initials = 'AM';
+  const getInitials = (name?: string) => {
+    if (!name) return 'U';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  };
+  const displayName = user?.fullName || 'Admin User';
+  const initials = getInitials(displayName);
+  const displayRole = user?.role === 'admin' ? 'Administrator' : (user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Admin');
 
   return (
     <header className="h-16 border-b bg-white fixed top-0 left-0 right-0 z-[60] px-4 md:px-6 flex items-center justify-between">
@@ -65,15 +72,12 @@ export function AdminHeader() {
         <DropdownMenu>
           <DropdownMenuTrigger className="outline-none border-none bg-transparent p-0 m-0 cursor-pointer">
             <div className="flex items-center gap-3 bg-zinc-50/50 border border-zinc-100 rounded-2xl p-1.5 pr-4 pl-1.5 hover:bg-zinc-100/50 transition-colors cursor-pointer group">
-              <Avatar className="h-10 w-10 border-2 border-white">
-                {user?.avatarUrl && <AvatarImage src={user.avatarUrl} />}
-                <AvatarFallback className="bg-[#D81B60] text-white text-sm font-black uppercase">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
+              <div className="h-10 w-10 rounded-full border-2 border-white bg-[#D81B60] text-white text-sm font-black uppercase flex items-center justify-center shadow-sm">
+                {initials}
+              </div>
               <div className="hidden md:block">
-                <p className="text-[13px] font-black text-zinc-900 leading-none group-hover:text-[#2D338B] transition-colors">{user?.fullName || 'Abera M.'}</p>
-                <p className="text-[11px] text-zinc-500 font-medium mt-1">Administrator</p>
+                <p className="text-[13px] font-black text-zinc-900 leading-none group-hover:text-[#2D338B] transition-colors">{displayName}</p>
+                <p className="text-[11px] text-zinc-500 font-medium mt-1">{displayRole}</p>
               </div>
               <ChevronDown className="h-4 w-4 text-zinc-400 group-hover:text-[#2D338B] transition-colors ml-1" />
             </div>
