@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -11,10 +11,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { authApi } from '@/services/api/auth.api';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
-import { Trophy, ShieldCheck, ArrowRight, Loader2, Mail } from 'lucide-react';
+import { Trophy, ArrowRight, Loader2, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FadeIn, ScaleIn } from '@/components/shared/LotterySkeletons';
 import Link from 'next/link';
+import { OtpInput } from '@/components/ui/otp-input';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -27,6 +28,8 @@ const otpSchema = z.object({
 export default function LoginPage() {
   const [step, setStep] = useState<'email' | 'otp'>('email');
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [timer, setTimer] = useState(0);
   const [email, setEmail] = useState('');
   const { login } = useAuth();
 
@@ -40,17 +43,43 @@ export default function LoginPage() {
     defaultValues: { otp: '' },
   });
 
+  // Countdown timer effect
+  useEffect(() => {
+    if (step !== 'otp') return;
+    if (timer <= 0) return;
+
+    const interval = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [step, timer]);
+
   async function onEmailSubmit(values: z.infer<typeof loginSchema>) {
     setLoading(true);
     try {
       await authApi.requestOtp(values.email);
       setEmail(values.email);
       setStep('otp');
+      setTimer(60); // Start 60-second timer
       toast.success('OTP sent to your email');
     } catch (error) {
       toast.error('Failed to send OTP. Please try again.');
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleResendOtp() {
+    setResending(true);
+    try {
+      await authApi.requestOtp(email);
+      setTimer(60); // Reset timer
+      toast.success('A new OTP has been sent to your email.');
+    } catch (error) {
+      toast.error('Failed to resend OTP. Please try again.');
+    } finally {
+      setResending(false);
     }
   }
 
@@ -145,19 +174,49 @@ export default function LoginPage() {
                           control={otpForm.control}
                           name="otp"
                           render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-sm font-medium text-zinc-700">Verification Code</FormLabel>
+                            <FormItem className="flex flex-col items-center justify-center space-y-3">
+                              <FormLabel className="text-sm font-medium text-zinc-700 w-full text-center">Verification Code</FormLabel>
                               <FormControl>
-                                <Input placeholder="123456" {...field} className="h-12 text-center text-2xl tracking-[0.4em] font-bold rounded-lg border-zinc-200 bg-zinc-50" />
+                                <OtpInput 
+                                  value={field.value} 
+                                  onChange={field.onChange} 
+                                  disabled={loading || resending} 
+                                />
                               </FormControl>
-                              <FormMessage />
+                              <FormMessage className="text-center" />
                             </FormItem>
                           )}
                         />
-                        <Button type="submit" className="w-full h-11 rounded-lg bg-[#F7941E] hover:bg-[#F7941E]/90 font-bold text-sm text-white" disabled={loading}>
+                        <Button type="submit" className="w-full h-11 rounded-lg bg-[#F7941E] hover:bg-[#F7941E]/90 font-bold text-sm text-white" disabled={loading || resending}>
                           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Verify & Login'}
                         </Button>
-                        <Button variant="ghost" className="w-full text-xs font-bold text-zinc-400 hover:text-[#2D338B] h-10" onClick={() => setStep('email')} disabled={loading}>
+
+                        {/* Resend Timer & Button */}
+                        <div className="text-center text-xs pt-1">
+                          {timer > 0 ? (
+                            <p className="text-zinc-500 font-medium">
+                              Resend code in <span className="text-zinc-700 font-bold font-mono bg-zinc-100 px-1.5 py-0.5 rounded">{timer}s</span>
+                            </p>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={handleResendOtp}
+                              disabled={resending || loading}
+                              className="text-[#2D338B] hover:text-[#2D338B]/80 font-bold hover:underline transition-all flex items-center justify-center gap-1.5 mx-auto py-1.5 px-3.5 bg-zinc-50 hover:bg-zinc-100/80 rounded-lg border border-zinc-100 shadow-sm"
+                            >
+                              {resending ? (
+                                <>
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                  Resending...
+                                </>
+                              ) : (
+                                'Request Again'
+                              )}
+                            </button>
+                          )}
+                        </div>
+
+                        <Button variant="ghost" className="w-full text-xs font-bold text-zinc-400 hover:text-[#2D338B] h-10 mt-1" onClick={() => { setStep('email'); setTimer(0); }} disabled={loading || resending}>
                           Change Email Address
                         </Button>
                       </form>
@@ -174,14 +233,6 @@ export default function LoginPage() {
           </Card>
         </ScaleIn>
 
-        <FadeIn delay={0.4}>
-          <div className="mt-6 flex flex-col items-center justify-center gap-2 text-[10px] text-zinc-400 font-bold uppercase tracking-widest">
-            <div className="flex items-center gap-1.5">
-              <ShieldCheck className="h-3 w-3" />
-              Secure Data Encryption
-            </div>
-          </div>
-        </FadeIn>
       </div>
     </div>
   );

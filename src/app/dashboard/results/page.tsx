@@ -85,13 +85,13 @@ export default function ResultsPage() {
                   <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
                     <Coins className="h-3 w-3" /> Total Pool
                   </div>
-                  <p className="text-lg font-bold">{latestDraw.totalPool != null ? Number(latestDraw.totalPool).toLocaleString() : '—'} ETB</p>
+                  <p className="text-lg font-bold">{Number(latestDraw.prizePool ?? latestDraw.totalPool ?? 0).toLocaleString()} ETB</p>
                 </div>
                 <div className="bg-white/5 p-4 rounded-xl border border-white/10">
                   <div className="flex items-center gap-2 text-zinc-400 text-xs mb-1">
                     <Users className="h-3 w-3" /> Total Winners
                   </div>
-                  <p className="text-lg font-bold">{latestDraw.winnersCount ?? 0}</p>
+                  <p className="text-lg font-bold">{latestDraw.winnerCount ?? latestDraw.winnersCount ?? 0}</p>
                 </div>
               </div>
             </div>
@@ -125,8 +125,8 @@ export default function ResultsPage() {
                   <TableCell>
                     <span className="font-mono font-bold text-primary">{draw.winningNumber || '—'}</span>
                   </TableCell>
-                  <TableCell>{draw.totalPool != null ? Number(draw.totalPool).toLocaleString() : '—'} ETB</TableCell>
-                  <TableCell>{draw.winnersCount ?? '—'}</TableCell>
+                  <TableCell>{Number(draw.prizePool ?? draw.totalPool ?? 0).toLocaleString()} ETB</TableCell>
+                  <TableCell>{draw.winnerCount ?? draw.winnersCount ?? 0}</TableCell>
                   <TableCell>
                     <Badge variant="secondary" className="capitalize">{draw.status || 'completed'}</Badge>
                   </TableCell>

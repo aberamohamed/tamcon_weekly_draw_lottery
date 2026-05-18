@@ -174,13 +174,13 @@ export default function AdminDrawsPage() {
                   </TableCell>
                   <TableCell>
                     <span className="font-bold">
-                      {draw.totalPool != null ? Number(draw.totalPool).toLocaleString() : '0'} ETB
+                      {Number(draw.prizePool ?? draw.totalPool ?? 0).toLocaleString()} ETB
                     </span>
                   </TableCell>
                   <TableCell>
-                    {draw.winnersCount != null && draw.winnersCount > 0 ? (
+                    {(draw.winnerCount ?? draw.winnersCount) != null && (draw.winnerCount ?? draw.winnersCount) > 0 ? (
                       <Badge className="bg-emerald-100 text-emerald-700 border-0 font-bold">
-                        {draw.winnersCount} winner{draw.winnersCount !== 1 ? 's' : ''}
+                        {draw.winnerCount ?? draw.winnersCount} winner{(draw.winnerCount ?? draw.winnersCount) !== 1 ? 's' : ''}
                       </Badge>
                     ) : (
                       <Badge variant="secondary" className="bg-amber-50 text-amber-600 border-amber-100 font-semibold">

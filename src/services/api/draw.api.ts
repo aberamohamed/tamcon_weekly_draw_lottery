@@ -6,7 +6,9 @@ export interface Draw {
   drawDate?: string;
   winningNumber?: string;
   totalPool?: number;
+  prizePool?: number;
   winnersCount?: number;
+  winnerCount?: number;
   status: 'upcoming' | 'completed' | string;
 }
 
