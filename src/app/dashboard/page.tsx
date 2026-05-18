@@ -1,12 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { walletApi } from '@/services/api/wallet.api';
 import { ticketApi } from '@/services/api/ticket.api';
 import { drawApi } from '@/services/api/draw.api';
+import { extractArray } from '@/lib/extractArray';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Wallet,
   Ticket as TicketIcon,
@@ -14,33 +17,60 @@ import {
   ArrowUpRight,
   Clock,
   History,
-  Sparkles
+  Sparkles,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import {
-  TicketSkeleton,
-  DrawBallSkeleton,
-  StatsCardSkeleton,
-  FadeIn
-} from '@/components/shared/LotterySkeletons';
 import { motion } from 'framer-motion';
+import { FadeIn } from '@/components/shared/LotterySkeletons';
+
+function PageSkeleton() {
+  return (
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <Skeleton className="h-9 w-48" />
+          <Skeleton className="h-4 w-72" />
+        </div>
+        <Skeleton className="h-10 w-40 rounded-lg" />
+      </div>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {[1, 2, 3].map((i) => (
+          <Skeleton key={i} className="h-[200px] w-full rounded-xl" />
+        ))}
+      </div>
+      <div className="grid gap-6 md:grid-cols-2">
+        <Skeleton className="h-[300px] w-full rounded-xl" />
+        <Skeleton className="h-[300px] w-full rounded-xl" />
+      </div>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
+  const [showBalance, setShowBalance] = useState(false);
   const { data: balanceData, isLoading: balanceLoading } = useQuery({
     queryKey: ['balance'],
-    queryFn: walletApi.getBalance,
+    queryFn: () => walletApi.getBalance(),
   });
 
   const { data: ticketsData, isLoading: ticketsLoading } = useQuery({
     queryKey: ['active-tickets'],
-    queryFn: ticketApi.getActiveTickets,
+    queryFn: () => ticketApi.getActiveTickets(),
   });
 
   const { data: latestDraw, isLoading: drawLoading } = useQuery({
     queryKey: ['latest-draw'],
-    queryFn: drawApi.getLatestDraw,
+    queryFn: () => drawApi.getLatestDraw(),
   });
+
+  const isLoading = balanceLoading || ticketsLoading || drawLoading;
+
+  if (isLoading) return <PageSkeleton />;
+
+  const activeTickets = extractArray(ticketsData);
 
   return (
     <div className="space-y-8">
@@ -61,27 +91,29 @@ export default function DashboardPage() {
         <Card className="border-none bg-gradient-to-br from-primary to-primary/80 text-primary-foreground">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Wallet Balance</CardTitle>
-            <Wallet className="h-4 w-4 text-primary-foreground/70" />
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-6 w-6 text-primary-foreground/70 hover:text-white hover:bg-white/20 rounded-full transition-colors"
+                onClick={() => setShowBalance(!showBalance)}
+              >
+                {showBalance ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </Button>
+              <Wallet className="h-4 w-4 text-primary-foreground/70" />
+            </div>
           </CardHeader>
           <CardContent>
-            {balanceLoading ? (
-              <StatsCardSkeleton />
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-3xl font-bold"
-              >
-                {balanceData?.balance.toLocaleString()} ETB
-              </motion.div>
-            )}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-3xl font-bold"
+            >
+              {showBalance ? `${(balanceData?.balance ?? 0).toLocaleString()} ETB` : '*** ETB'}
+            </motion.div>
             <p className="text-xs text-primary-foreground/70 mt-1 flex items-center">
               Available for immediate use
             </p>
-            <Button variant="secondary" size="sm" className="w-full mt-4 bg-white/20 hover:bg-white/30 border-none text-white">
-              <ArrowUpRight className="mr-2 h-4 w-4" />
-              Deposit Funds
-            </Button>
           </CardContent>
         </Card>
 
@@ -91,17 +123,13 @@ export default function DashboardPage() {
             <TicketIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {ticketsLoading ? (
-              <StatsCardSkeleton />
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-3xl font-bold"
-              >
-                {ticketsData?.length || 0}
-              </motion.div>
-            )}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-3xl font-bold"
+            >
+              {activeTickets.length}
+            </motion.div>
             <p className="text-xs text-muted-foreground mt-1">
               Participating in upcoming draw
             </p>
@@ -118,12 +146,10 @@ export default function DashboardPage() {
             <Trophy className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {drawLoading ? (
-              <DrawBallSkeleton />
-            ) : (
+            {latestDraw?.winningNumber ? (
               <div className="flex flex-wrap gap-3">
-                {latestDraw?.winningNumber.split('').map((num, i) => {
-                  const isWinner = i === latestDraw.winningNumber.length - 1; // Last ball as the winner ball
+                {latestDraw.winningNumber.split('').map((num: string, i: number) => {
+                  const isWinner = i === latestDraw.winningNumber.length - 1;
                   return (
                     <motion.div
                       key={i}
@@ -141,6 +167,8 @@ export default function DashboardPage() {
                   );
                 })}
               </div>
+            ) : (
+              <p className="text-sm text-muted-foreground py-4">Waiting for draw results...</p>
             )}
             <p className="text-xs text-muted-foreground mt-4 font-semibold">
               Draw Date: {latestDraw?.drawDate ? format(new Date(latestDraw.drawDate), 'PPP') : 'N/A'}
@@ -160,17 +188,28 @@ export default function DashboardPage() {
               <Clock className="mr-2 h-5 w-5 text-primary" />
               Upcoming Draw
             </CardTitle>
-            <CardDescription>Next drawing is in 2 days, 4 hours</CardDescription>
+            <CardDescription>
+              {latestDraw?.drawDate
+                ? `Next draw: ${format(new Date(latestDraw.drawDate), 'PPP')}`
+                : 'Draw date not available'}
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="bg-muted p-4 rounded-lg flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground">Estimated Jackpot</p>
-                <p className="text-xl font-bold">25,000.00 ETB</p>
+                <p className="text-xs text-muted-foreground">Current Pool</p>
+                <p className="text-xl font-bold">
+                  {latestDraw?.totalPool != null
+                    ? `${Number(latestDraw.totalPool).toLocaleString()} ETB`
+                    : '—'}
+                </p>
               </div>
-              <Badge className="bg-green-500 hover:bg-green-600">Active</Badge>
+              <Badge className={latestDraw?.status === 'upcoming' || latestDraw?.status === 'active' || latestDraw?.status === 'open'
+                ? 'bg-green-500 hover:bg-green-600'
+                : 'bg-zinc-400 hover:bg-zinc-500'}>
+                {latestDraw?.status ? latestDraw.status.charAt(0).toUpperCase() + latestDraw.status.slice(1) : 'No Draw'}
+              </Badge>
             </div>
-            <Button className="w-full">Set Reminder</Button>
           </CardContent>
         </Card>
 
@@ -183,17 +222,19 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {ticketsLoading ? (
-                Array(3).fill(0).map((_, i) => <TicketSkeleton key={i} />)
-              ) : ticketsData?.length ? (
-                ticketsData.slice(0, 3).map((ticket, i) => (
-                  <FadeIn key={ticket.id} delay={i * 0.1}>
+              {activeTickets.length ? (
+                activeTickets.slice(0, 3).map((ticket: any, i: number) => (
+                  <FadeIn key={ticket._id || ticket.id} delay={i * 0.1}>
                     <div className="flex items-center justify-between border-b pb-3 last:border-0 last:pb-0">
                       <div>
                         <p className="font-semibold text-[#2D338B]">{ticket.number}</p>
-                        <p className="text-xs text-muted-foreground">{format(new Date(ticket.purchaseDate), 'PPP')}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {ticket.purchaseDate ? format(new Date(ticket.purchaseDate), 'PPP') : 'N/A'}
+                        </p>
                       </div>
-                      <Badge variant="outline" className="border-[#F7941E] text-[#F7941E]">{ticket.status}</Badge>
+                      <Badge variant="outline" className="border-[#F7941E] text-[#F7941E] capitalize">
+                        {ticket.status || 'active'}
+                      </Badge>
                     </div>
                   </FadeIn>
                 ))

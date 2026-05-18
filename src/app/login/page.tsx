@@ -170,19 +170,6 @@ export default function LoginPage() {
                 Don't have an account?{' '}
                 <Link href="/register" className="text-[#2D338B] hover:underline font-bold">Create Account</Link>
               </p>
-
-              {/* Development Bypass */}
-              <div className="mt-8 pt-6 border-t border-zinc-100 flex flex-col items-center gap-3">
-                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Development Bypass</p>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full h-10 text-xs font-bold border-zinc-200 text-zinc-500 hover:bg-zinc-50 rounded-lg"
-                  asChild
-                >
-                  <Link href="/dashboard">Skip to Dashboard (Guest Mode)</Link>
-                </Button>
-              </div>
             </CardContent>
           </Card>
         </ScaleIn>

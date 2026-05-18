@@ -1,25 +1,30 @@
 import api from '@/lib/axios';
 
 export interface Draw {
-  id: string;
-  drawDate: string;
-  winningNumber: string;
-  totalPool: number;
-  winnersCount: number;
-  status: 'upcoming' | 'completed';
+  _id: string;
+  id?: string;
+  drawDate?: string;
+  winningNumber?: string;
+  totalPool?: number;
+  winnersCount?: number;
+  status: 'upcoming' | 'completed' | string;
 }
 
 export const drawApi = {
   getLatestDraw: async () => {
-    const { data } = await api.get<Draw>('/draws/latest');
-    return data;
+    const { data } = await api.get('/lottery/current');
+    return data.data !== undefined ? data.data : data;
   },
-  getDrawHistory: async () => {
-    const { data } = await api.get<Draw[]>('/draws/history');
-    return data;
+  getDrawHistory: async (page = 1, limit = 20) => {
+    const { data } = await api.get(`/admin/draws/history?page=${page}&limit=${limit}`);
+    return data.data !== undefined ? data.data : data;
   },
-  triggerDraw: async () => {
-    const { data } = await api.post('/draws/trigger');
-    return data;
+  getDraws: async (page = 1, limit = 50) => {
+    const { data } = await api.get(`/admin/draws?page=${page}&limit=${limit}`);
+    return data.data !== undefined ? data.data : data;
+  },
+  triggerDraw: async (drawId: string) => {
+    const { data } = await api.post('/admin/draws/trigger', { drawId });
+    return data.data !== undefined ? data.data : data;
   },
 };

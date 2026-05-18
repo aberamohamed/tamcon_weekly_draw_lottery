@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,8 +8,36 @@ import { Badge } from "@/components/ui/badge";
 import { Ticket, Trophy, ShieldCheck, Zap, ArrowRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { FadeIn, ScaleIn } from "@/components/shared/LotterySkeletons";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { PaymentReceiptView } from "@/components/shared/PaymentReceiptView";
 
-export default function Home() {
+function HomeContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  
+  const paymentStatus = searchParams.get('payment') || searchParams.get('status');
+  const txRef = searchParams.get('tx_ref') || searchParams.get('trx_ref');
+  const isPaymentRedirect = !!paymentStatus && !!txRef;
+
+  if (isPaymentRedirect) {
+    return (
+      <div className="flex flex-col min-h-screen bg-background">
+        <header className="px-4 lg:px-6 h-16 flex items-center border-b bg-background/60">
+          <Link className="flex items-center justify-center group" href="/">
+            <Trophy className="h-6 w-6 text-[#2D338B]" />
+            <span className="ml-2 text-xl font-black tracking-tighter">
+              <span className="text-[#2D338B]">TAM</span>
+              <span className="text-[#F7941E]">CON.</span>
+            </span>
+          </Link>
+        </header>
+        <main className="flex-1">
+          <PaymentReceiptView txRef={txRef!} />
+        </main>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col min-h-screen bg-background overflow-hidden">
       {/* Decorative background elements */}
@@ -218,6 +247,14 @@ export default function Home() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={null}>
+      <HomeContent />
+    </Suspense>
   );
 }
 

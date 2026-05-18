@@ -1,25 +1,29 @@
 import api from '@/lib/axios';
 
 export interface Ticket {
-  id: string;
-  number: string;
-  drawId: string;
-  status: 'pending' | 'won' | 'lost';
-  purchaseDate: string;
-  price: number;
+  _id: string;
+  id?: string;
+  number?: string;
+  drawId?: string;
+  status?: 'pending' | 'won' | 'lost' | string;
+  purchaseDate?: string;
+  createdAt?: string;
+  price?: number;
 }
 
 export const ticketApi = {
-  buyTicket: async (count: number = 1) => {
-    const { data } = await api.post('/tickets/buy', { count });
-    return data;
+  buyTicket: async (quantity: number = 1) => {
+    const { data } = await api.post('/payments/checkout', { quantity });
+    return data.data !== undefined ? data.data : data;
   },
-  getTicketHistory: async () => {
-    const { data } = await api.get<Ticket[]>('/tickets/history');
-    return data;
+  getTicketHistory: async (page = 1, limit = 20) => {
+    const { data } = await api.get(`/lottery/tickets/mine?page=${page}&limit=${limit}`);
+    const result = data.data !== undefined ? data.data : data;
+    return Array.isArray(result) ? result : (result.items || result.tickets || []);
   },
-  getActiveTickets: async () => {
-    const { data } = await api.get<Ticket[]>('/tickets/active');
-    return data;
+  getActiveTickets: async (page = 1, limit = 20) => {
+    const { data } = await api.get(`/lottery/tickets/mine?page=${page}&limit=${limit}`);
+    const result = data.data !== undefined ? data.data : data;
+    return Array.isArray(result) ? result : (result.items || result.tickets || []);
   },
 };

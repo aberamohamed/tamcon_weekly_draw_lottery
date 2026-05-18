@@ -21,10 +21,10 @@ export default function DashboardLayout({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated && user?.role !== 'customer') {
-      router.push('/admin');
+    if (!isLoading && !isAuthenticated) {
+      router.push('/login');
     }
-  }, [isLoading, isAuthenticated, user, router]);
+  }, [isLoading, isAuthenticated, router]);
 
   if (isLoading) {
     return (
@@ -91,7 +91,7 @@ export default function DashboardLayout({
     );
   }
 
-  if (!isLoading && user && user.role !== 'customer') return null;
+  if (!isAuthenticated && !isLoading) return null;
 
   return (
     <div className="min-h-screen bg-zinc-50 flex flex-col">
