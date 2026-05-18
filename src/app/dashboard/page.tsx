@@ -15,7 +15,6 @@ import {
   Ticket as TicketIcon,
   Trophy,
   ArrowUpRight,
-  Clock,
   History,
   Sparkles,
   Eye,
@@ -61,15 +60,17 @@ export default function DashboardPage() {
     queryFn: () => ticketApi.getActiveTickets(),
   });
 
-  const { data: latestDraw, isLoading: drawLoading } = useQuery({
-    queryKey: ['latest-draw'],
-    queryFn: () => drawApi.getLatestDraw(),
+  const { data: drawHistoryData, isLoading: drawLoading } = useQuery({
+    queryKey: ['draw-history-dashboard'],
+    queryFn: () => drawApi.getDrawHistory(),
   });
 
   const isLoading = balanceLoading || ticketsLoading || drawLoading;
 
   if (isLoading) return <PageSkeleton />;
 
+  const allDraws = extractArray(drawHistoryData);
+  const latestDraw = allDraws[0] ?? null;
   const activeTickets = extractArray(ticketsData);
 
   return (
@@ -181,39 +182,8 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="border border-zinc-100">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Clock className="mr-2 h-5 w-5 text-primary" />
-              Upcoming Draw
-            </CardTitle>
-            <CardDescription>
-              {latestDraw?.drawDate
-                ? `Next draw: ${format(new Date(latestDraw.drawDate), 'PPP')}`
-                : 'Draw date not available'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-muted p-4 rounded-lg flex items-center justify-between">
-              <div>
-                <p className="text-xs text-muted-foreground">Current Pool</p>
-                <p className="text-xl font-bold">
-                  {latestDraw?.totalPool != null
-                    ? `${Number(latestDraw.totalPool).toLocaleString()} ETB`
-                    : '—'}
-                </p>
-              </div>
-              <Badge className={latestDraw?.status === 'upcoming' || latestDraw?.status === 'active' || latestDraw?.status === 'open'
-                ? 'bg-green-500 hover:bg-green-600'
-                : 'bg-zinc-400 hover:bg-zinc-500'}>
-                {latestDraw?.status ? latestDraw.status.charAt(0).toUpperCase() + latestDraw.status.slice(1) : 'No Draw'}
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
 
-        <Card className="border border-zinc-100">
+      <Card className="border border-zinc-100">
           <CardHeader>
             <CardTitle className="flex items-center">
               <History className="mr-2 h-5 w-5 text-primary" />
@@ -245,8 +215,7 @@ export default function DashboardPage() {
               )}
             </div>
           </CardContent>
-        </Card>
-      </div>
+      </Card>
     </div>
   );
 }

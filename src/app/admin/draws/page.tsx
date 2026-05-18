@@ -127,29 +127,7 @@ export default function AdminDrawsPage() {
                 This action is irreversible and will notify all participating users.
               </DialogDescription>
             </DialogHeader>
-            <div className="bg-muted p-4 rounded-lg space-y-2 my-4">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Draw ID:</span>
-                <span className="font-bold font-mono text-xs">{nextDrawId || '—'}</span>
-              </div>
-              {currentDraw && (
-                <>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Status:</span>
-                    <span className="font-bold capitalize">{currentDraw.status || '—'}</span>
-                  </div>
-                  {currentDraw.totalPool != null && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Current Pool:</span>
-                      <span className="font-bold">{Number(currentDraw.totalPool).toLocaleString()} ETB</span>
-                    </div>
-                  )}
-                </>
-              )}
-              {!nextDrawId && (
-                <p className="text-xs text-amber-600 font-medium">No upcoming draw found. Check that a draw exists.</p>
-              )}
-            </div>
+
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsConfirmOpen(false)}>Cancel</Button>
               <Button 
@@ -194,8 +172,22 @@ export default function AdminDrawsPage() {
                   <TableCell>
                     <span className="font-bold text-primary">{draw.winningNumber || '—'}</span>
                   </TableCell>
-                  <TableCell>{draw.totalPool != null ? Number(draw.totalPool).toLocaleString() : '—'} ETB</TableCell>
-                  <TableCell>{draw.winnersCount ?? '—'}</TableCell>
+                  <TableCell>
+                    <span className="font-bold">
+                      {draw.totalPool != null ? Number(draw.totalPool).toLocaleString() : '0'} ETB
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    {draw.winnersCount != null && draw.winnersCount > 0 ? (
+                      <Badge className="bg-emerald-100 text-emerald-700 border-0 font-bold">
+                        {draw.winnersCount} winner{draw.winnersCount !== 1 ? 's' : ''}
+                      </Badge>
+                    ) : (
+                      <Badge variant="secondary" className="bg-amber-50 text-amber-600 border-amber-100 font-semibold">
+                        No winner selected
+                      </Badge>
+                    )}
+                  </TableCell>
                   <TableCell>
                     <Badge variant="secondary" className="bg-zinc-100 text-zinc-700 capitalize">
                       {draw.status || 'completed'}

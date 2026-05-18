@@ -22,7 +22,7 @@ import {
 } from 'recharts';
 import { 
   Users, 
-  DollarSign, 
+  Coins, 
   Ticket, 
   TrendingUp
 } from 'lucide-react';
@@ -82,17 +82,26 @@ export default function AdminDashboard() {
         {[
           { title: 'Total Users', value: stats?.totalUsers?.toLocaleString() ?? '—', icon: Users, color: '#4F46E5' },
           { title: 'Tickets (This Week)', value: stats?.currentWeekTicketsSold?.toLocaleString() ?? '—', icon: Ticket, color: '#F7941E' },
-          { title: 'Revenue (This Week)', value: stats?.currentWeekRevenue != null ? `${stats?.currentWeekRevenue.toLocaleString()} ETB` : '—', icon: DollarSign, color: '#2D338B' },
+          { title: 'Revenue (This Week)', value: stats?.currentWeekRevenue != null ? `${stats?.currentWeekRevenue.toLocaleString()} ETB` : '—', icon: 'ETB', color: '#2D338B' },
           { title: 'Current Prize Pool', value: stats?.currentPrizePool != null ? `${stats?.currentPrizePool.toLocaleString()} ETB` : '—', icon: TrendingUp, color: '#10B981' },
           { title: 'Last Draw Winners', value: stats?.lastDrawWinners?.toLocaleString() ?? '—', icon: Users, color: '#FB923C' },
-          { title: 'Last Draw Payout', value: stats?.lastDrawPayout != null ? `${stats?.lastDrawPayout.toLocaleString()} ETB` : '—', icon: DollarSign, color: '#8B5CF6' },
+          { title: 'Last Draw Payout', value: stats?.lastDrawPayout != null ? `${stats?.lastDrawPayout.toLocaleString()} ETB` : '—', icon: 'ETB', color: '#8B5CF6' },
         ].map((kpi, i) => (
           <ScaleIn key={kpi.title} delay={i * 0.1}>
             <Card className="border border-zinc-200 bg-white transition-all rounded-2xl overflow-hidden group pt-0">
               <div className="flex flex-row items-center justify-between px-6 py-4 border-b border-zinc-100 bg-zinc-50/30">
                 <p className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.1em]">{kpi.title}</p>
-                <div className="p-2 rounded-lg bg-white border border-zinc-100 group-hover:bg-[#2D338B]/5 transition-colors">
-                  <kpi.icon className={`h-4 w-4`} style={{ color: kpi.color }} />
+                <div className="p-2 rounded-lg bg-white border border-zinc-100 group-hover:bg-[#2D338B]/5 transition-colors flex items-center justify-center min-w-8 h-8">
+                  {typeof kpi.icon === 'string' ? (
+                    <span className="text-[10px] font-black tracking-wider leading-none" style={{ color: kpi.color }}>
+                      {kpi.icon}
+                    </span>
+                  ) : (
+                    (() => {
+                      const IconComponent = kpi.icon;
+                      return <IconComponent className="h-4 w-4" style={{ color: kpi.color }} />;
+                    })()
+                  )}
                 </div>
               </div>
               <CardContent>
