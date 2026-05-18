@@ -62,6 +62,7 @@ function PageSkeleton() {
 
 function TicketsContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOpeningChapa, setIsOpeningChapa] = useState(false);
   const [showBalance, setShowBalance] = useState(false);
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
@@ -102,6 +103,7 @@ function TicketsContent() {
     mutationFn: () => ticketApi.buyTicket(1),
     onSuccess: (data) => {
       if (data?.checkoutUrl) {
+        setIsOpeningChapa(true);
         toast.info('Opening secure checkout...');
         window.location.href = data.checkoutUrl;
       } else {
@@ -112,9 +114,20 @@ function TicketsContent() {
       }
     },
     onError: (error: any) => {
+      setIsOpeningChapa(false);
       toast.error(error.response?.data?.message || 'Failed to purchase ticket');
     },
   });
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open && (buyMutation.isPending || isOpeningChapa)) {
+      return;
+    }
+    setIsModalOpen(open);
+    if (!open) {
+      setIsOpeningChapa(false);
+    }
+  };
 
   const ticketHistory = extractArray(ticketHistoryData);
   const userBalance = balanceData?.balance ?? 0;
@@ -133,7 +146,7 @@ function TicketsContent() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <Dialog open={isModalOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger render={
               <Button className="bg-[#2D338B] hover:bg-[#2D338B]/90 shadow-lg shadow-[#2D338B]/20 font-bold">
                 <Plus className="mr-2 h-4 w-4" /> Buy Ticket
@@ -183,15 +196,15 @@ function TicketsContent() {
             <DialogFooter>
               <Button 
                 className="w-full h-12 text-lg font-bold bg-[#2D338B]" 
-                disabled={buyMutation.isPending}
+                disabled={buyMutation.isPending || isOpeningChapa}
                 onClick={() => buyMutation.mutate()}
               >
-                {buyMutation.isPending ? (
+                {buyMutation.isPending || isOpeningChapa ? (
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 ) : (
                   <ShoppingCart className="mr-2 h-5 w-5" />
                 )}
-                Buy with Chapa
+                {isOpeningChapa ? 'Opening Secure...' : 'Buy with Chapa'}
               </Button>
             </DialogFooter>
           </DialogContent>
