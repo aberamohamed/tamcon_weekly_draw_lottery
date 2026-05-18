@@ -1,20 +1,37 @@
 'use client';
 
+import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { 
-  Bell, 
   Search, 
   Shield, 
   ChevronDown,
   LayoutDashboard,
-  Settings
+  Settings,
+  LogOut
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export function AdminHeader() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   const displayName = user?.fullName || 'Abera M.';
   const initials = 'AM';
@@ -44,28 +61,67 @@ export function AdminHeader() {
           System Settings
         </Link>
 
-        {/* Icons */}
-        <div className="flex items-center gap-1 md:gap-2">
-          <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-[#2D338B]">
-            <Bell className="h-5 w-5" />
-          </Button>
-        </div>
-
         {/* User Profile */}
-        <div className="flex items-center gap-3 bg-zinc-50/50 border border-zinc-100 rounded-2xl p-1.5 pr-4 pl-1.5 hover:bg-zinc-100/50 transition-colors cursor-pointer group">
-          <Avatar className="h-10 w-10 border-2 border-white">
-            {user?.avatarUrl && <AvatarImage src={user.avatarUrl} />}
-            <AvatarFallback className="bg-[#D81B60] text-white text-sm font-black uppercase">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-          <div className="hidden md:block">
-            <p className="text-[13px] font-black text-zinc-900 leading-none">{user?.fullName || 'Abera M.'}</p>
-            <p className="text-[11px] text-zinc-500 font-medium mt-1">Administrator</p>
-          </div>
-          <ChevronDown className="h-4 w-4 text-zinc-400 group-hover:text-zinc-600 transition-colors ml-1" />
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="outline-none border-none bg-transparent p-0 m-0 cursor-pointer">
+            <div className="flex items-center gap-3 bg-zinc-50/50 border border-zinc-100 rounded-2xl p-1.5 pr-4 pl-1.5 hover:bg-zinc-100/50 transition-colors cursor-pointer group">
+              <Avatar className="h-10 w-10 border-2 border-white">
+                {user?.avatarUrl && <AvatarImage src={user.avatarUrl} />}
+                <AvatarFallback className="bg-[#D81B60] text-white text-sm font-black uppercase">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <div className="hidden md:block">
+                <p className="text-[13px] font-black text-zinc-900 leading-none group-hover:text-[#2D338B] transition-colors">{user?.fullName || 'Abera M.'}</p>
+                <p className="text-[11px] text-zinc-500 font-medium mt-1">Administrator</p>
+              </div>
+              <ChevronDown className="h-4 w-4 text-zinc-400 group-hover:text-[#2D338B] transition-colors ml-1" />
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl border-zinc-100 shadow-xl">
+            <DropdownMenuItem className="rounded-xl cursor-pointer p-0 font-semibold hover:bg-zinc-50">
+              <Link href="/admin/settings" className="flex items-center w-full p-3">
+                <Settings className="mr-2 h-4 w-4 text-zinc-500" />
+                Settings
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-zinc-100 my-1" />
+            <DropdownMenuItem 
+              className="rounded-xl cursor-pointer p-3 font-semibold text-red-600 focus:bg-red-50 focus:text-red-700"
+              onClick={() => setShowLogoutDialog(true)}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
+
+      <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <DialogContent className="sm:max-w-md rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-black text-[#2D338B]">Confirm Logout</DialogTitle>
+            <DialogDescription className="text-zinc-500 font-medium">
+              Are you sure you want to log out of the admin panel?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 sm:gap-0 mt-6">
+            <Button variant="outline" className="rounded-xl font-bold h-12" onClick={() => setShowLogoutDialog(false)}>
+              Cancel
+            </Button>
+            <Button 
+              variant="default" 
+              className="rounded-xl font-bold h-12 bg-red-600 hover:bg-red-700 text-white"
+              onClick={() => {
+                logout();
+                setShowLogoutDialog(false);
+              }}
+            >
+              Logout
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 }

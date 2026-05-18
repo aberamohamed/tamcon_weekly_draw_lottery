@@ -8,12 +8,10 @@ import {
   Wallet, 
   Ticket, 
   History, 
-  LogOut, 
   Menu, 
   X,
   LayoutDashboard,
   User,
-  Bell,
   ChevronRight,
   Search
 } from 'lucide-react';
@@ -28,12 +26,11 @@ const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'My Tickets', href: '/dashboard/tickets', icon: Ticket },
   { name: 'Draw Results', href: '/dashboard/results', icon: Trophy },
-  { name: 'Notifications', href: '/dashboard/notifications', icon: Bell },
 ];
 
 export function DashboardNav() {
   const pathname = usePathname();
-  const { logout, user } = useAuth();
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   const NavContent = () => (
@@ -61,7 +58,7 @@ export function DashboardNav() {
               href={item.href}
               onClick={() => setIsOpen(false)}
               className={cn(
-                "relative flex items-center justify-between p-2 rounded-xl transition-all group overflow-hidden",
+                "relative flex items-center justify-between p-1.5 rounded-xl transition-all group overflow-hidden",
                 isActive 
                   ? "bg-[#2D338B] text-white" 
                   : "text-zinc-500 hover:text-[#2D338B] hover:bg-zinc-100"
@@ -69,7 +66,7 @@ export function DashboardNav() {
             >
               <div className="flex items-center gap-4">
                 <div className={cn(
-                  "w-10 h-10 rounded-xl flex items-center justify-center transition-all border",
+                  "w-8 h-8 rounded-lg flex items-center justify-center transition-all border",
                   isActive 
                     ? "bg-white/10 border-white/20" 
                     : "bg-zinc-100 border-transparent group-hover:bg-white group-hover:border-zinc-200"
@@ -96,19 +93,7 @@ export function DashboardNav() {
         })}
       </nav>
 
-      {/* Profile/Logout Mini Footer (Optional in sidebar now) */}
-      <div className="p-4 border-t border-zinc-50 bg-zinc-50/30">
-        <button 
-          onClick={logout}
-          className="w-full flex items-center justify-between p-2 rounded-xl hover:bg-red-50 text-zinc-500 hover:text-red-500 transition-colors font-bold text-xs uppercase"
-        >
-          <div className="flex items-center gap-3">
-            <LogOut className="h-4 w-4" />
-            <span>Sign Out</span>
-          </div>
-          <ChevronRight className="h-4 w-4 opacity-30" />
-        </button>
-      </div>
+
     </div>
   );
 

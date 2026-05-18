@@ -24,10 +24,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const userData = await authApi.getCurrentUser();
-          setUser(userData);
+          const result = await authApi.getCurrentUser();
+          const userData = result?.user || result;
+          if (userData) {
+            setUser(userData);
+          } else {
+            throw new Error('No user data');
+          }
         } catch (error) {
+          console.error('Auth init failed:', error);
           localStorage.removeItem('token');
+          localStorage.removeItem('refreshToken');
+          setUser(null);
         }
       }
       setIsLoading(false);
@@ -38,7 +46,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, otp: string) => {
     const data = await authApi.verifyOtp(email, otp);
-    localStorage.setItem('token', data.token);
+    localStorage.setItem('token', data.accessToken);
+    if (data.refreshToken) {
+      localStorage.setItem('refreshToken', data.refreshToken);
+    }
     setUser(data.user);
     if (data.user.role === 'admin') {
       router.push('/admin');
@@ -49,6 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     setUser(null);
     router.push('/login');
   };

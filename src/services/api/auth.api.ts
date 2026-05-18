@@ -1,7 +1,8 @@
 import api from '@/lib/axios';
 
 export interface LoginResponse {
-  token: string;
+  accessToken: string;
+  refreshToken?: string;
   user: {
     id: string;
     email: string;
@@ -13,7 +14,7 @@ export interface LoginResponse {
 export const authApi = {
   requestOtp: async (email: string) => {
     const { data } = await api.post('/auth/otp/request', { email });
-    return data;
+    return data.data !== undefined ? data.data : data;
   },
   verifyOtp: async (email: string, otp: string): Promise<LoginResponse> => {
     const { data } = await api.post('/auth/otp/verify', { 
@@ -21,26 +22,21 @@ export const authApi = {
       otp,
       useHttpOnlyCookies: false 
     });
-    return data;
+    return data.data !== undefined ? data.data : data;
   },
   logout: async () => {
     const { data } = await api.post('/auth/logout');
-    return data;
+    return data.data !== undefined ? data.data : data;
   },
   getCurrentUser: async () => {
     const { data } = await api.get('/auth/me');
-    return data;
+    return data.data !== undefined ? data.data : data;
   },
   register: async (userData: { 
     fullName: string, 
-    email: string, 
-    phoneNumber: string,
-    gender: string,
-    motherName: string,
-    idType: string,
-    idNumber: string
+    email: string
   }) => {
     const { data } = await api.post('/auth/register', userData);
-    return data;
+    return data.data !== undefined ? data.data : data;
   },
 };
